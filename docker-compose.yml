@@ -1,0 +1,16 @@
+services:
+  progress-tracker:
+    build: .
+    container_name: toolz-progress
+    ports:
+      - "8507:8507"
+    volumes:
+      - progress-tracker-data:/data
+    environment:
+      - PORT=8507
+      - STATE_FILE=/data/state.json
+    restart: unless-stopped
+
+volumes:
+  progress-tracker-data:
+    name: progress-tracker-data

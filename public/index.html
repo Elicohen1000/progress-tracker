@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediTailor — Progress Dashboard</title>
+<link rel="icon" type="image/png" href="pyramid-favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f2f8;
+  --surface: #ffffff;
+  --surface2: #f7f8fc;
+  --border: #e4e7f0;
+  --border2: #d1d5e8;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --indigo: #6366f1;
+  --indigo-light: #eef2ff;
+  --indigo-mid: #c7d2fe;
+  --green: #10b981;
+  --green-light: #ecfdf5;
+  --green-mid: #a7f3d0;
+  --amber: #f59e0b;
+  --amber-light: #fffbeb;
+  --amber-mid: #fde68a;
+  --red: #ef4444;
+  --red-light: #fef2f2;
+  --red-mid: #fecaca;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding: 28px 24px 48px;
+  font-size: 17px;
+}
+
+/* ── Header ── */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--indigo);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 20px; font-weight: 700;
+}
+h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+.subtitle { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  padding: 7px 16px; border-radius: 7px; border: 1px solid var(--border2);
+  background: var(--surface); color: var(--text-muted); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn:hover { background: var(--surface2); color: var(--text); border-color: var(--indigo); }
+
+/* ── Summary cards ── */
+.summary-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px;
+}
+.summary-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px; box-shadow: var(--shadow);
+}
+.summary-label {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 10px;
+}
+.summary-nums {
+  display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;
+}
+.summary-pct { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.summary-detail { font-size: 14px; color: var(--text-muted); }
+.track {
+  height: 6px; background: var(--border); border-radius: 99px; overflow: hidden;
+}
+.fill {
+  height: 100%; border-radius: 99px; transition: width 0.6s ease;
+}
+.fill-organic { background: linear-gradient(90deg, var(--indigo), #818cf8); }
+.fill-validation { background: linear-gradient(90deg, var(--green), #34d399); }
+
+/* ── Main grid ── */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+/* ── Manifest panel ── */
+.manifest-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; box-shadow: var(--shadow);
+}
+.panel-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface2);
+}
+.panel-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.panel-icon-o { background: var(--indigo-light); }
+.panel-icon-v { background: var(--green-light); }
+.panel-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); }
+.panel-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.panel-body { padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+
+/* ── Layer label ── */
+.layer-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-light); margin: 10px 0 5px 2px;
+  display: flex; align-items: center; gap: 8px;
+}
+.layer-label:first-child { margin-top: 0; }
+.layer-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.blocks-row { display: grid; gap: 6px; width: 100%; }
+.blocks-1 { grid-template-columns: 1fr; }
+.blocks-2 { grid-template-columns: 1fr 1fr; }
+.blocks-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── Block ── */
+.block {
+  border-radius: 10px; border: 1.5px solid var(--border);
+  background: var(--surface); overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 0; width: 100%;
+}
+.block:hover { box-shadow: var(--shadow-md); }
+
+.block-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 11px 12px 9px; cursor: pointer; user-select: none; gap: 8px;
+}
+
+.block-left { flex: 1; min-width: 0; }
+.block-tag {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--text-light); margin-bottom: 4px;
+}
+.block-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); line-height: 1.3; }
+.block-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; line-height: 1.3; }
+
+.block-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.chevron {
+  width: 16px; height: 16px; color: var(--text-light);
+  transition: transform 0.2s; flex-shrink: 0; margin-top: 1px;
+}
+.block.open .chevron { transform: rotate(180deg); }
+
+/* Progress bar inside block */
+.block-progress-area { padding: 0 12px 10px; }
+.block-prog-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
+}
+.block-prog-label { font-size: 12px; color: var(--text-muted); }
+.block-prog-count { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.block-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.block-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease, background 0.4s ease; }
+
+/* Status badge */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap;
+}
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+.badge-not-started { background: #f3f4f6; color: var(--text-light); }
+.badge-not-started .badge-dot { background: var(--text-light); }
+.badge-in-progress-low { background: var(--amber-light); color: #d97706; }
+.badge-in-progress-low .badge-dot { background: var(--amber); }
+.badge-in-progress-high { background: var(--indigo-light); color: var(--indigo); }
+.badge-in-progress-high .badge-dot { background: var(--indigo); }
+.badge-done { background: var(--green-light); color: #059669; }
+.badge-done .badge-dot { background: var(--green); }
+.badge-critical { background: var(--red-light); color: var(--red); }
+.badge-critical .badge-dot { background: var(--red); }
+
+/* Block status border */
+.block-status-not-started { border-color: var(--border); }
+.block-status-in-progress-low { border-color: var(--amber-mid); }
+.block-status-in-progress-high { border-color: var(--indigo-mid); }
+.block-status-done { border-color: var(--green-mid); }
+.block-status-critical {
+  border-color: var(--red-mid);
+  animation: pulse-red 2.5s ease-in-out infinite;
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  50% { box-shadow: 0 0 0 4px rgba(239,68,68,0.12); }
+}
+
+/* Task list */
+.task-list { border-top: 1px solid var(--border); overflow: hidden; }
+.task-list.collapsed { display: none; }
+
+.task-item {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 7px 12px; border-bottom: 1px solid var(--bg);
+  cursor: pointer; transition: background 0.1s;
+}
+.task-item:last-child { border-bottom: none; }
+.task-item:hover { background: var(--surface2); }
+
+.task-check {
+  width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--border2);
+  flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.task-item.done .task-check {
+  background: var(--green); border-color: var(--green);
+}
+.task-check-icon { display: none; }
+.task-item.done .task-check-icon { display: block; }
+
+.task-label { font-size: 13px; color: var(--text); line-height: 1.4; }
+.task-item.done .task-label { color: var(--text-muted); text-decoration: line-through; }
+
+/* Gate dividers (validation) */
+.gate {
+  display: flex; align-items: center; gap: 8px;
+  margin: 4px 0; padding: 0 2px; width: 100%;
+}
+.gate-line { flex: 1; height: 1px; background: var(--border); }
+.gate-badge {
+  font-size: 11px; color: var(--text-light); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 3px 10px; border: 1px solid var(--border);
+  border-radius: 20px; white-space: nowrap; background: var(--surface2);
+}
+
+/* Arrow pointing up — validation manifest */
+.up-arrow {
+  display: flex; flex-direction: column; align-items: center;
+  color: var(--text-light); font-size: 13px; gap: 2px; margin: 6px 0 2px;
+}
+
+/* Analytics base */
+.analytics-block {
+  border-radius: 10px; border: 1.5px solid var(--border);
+  background: var(--surface2); overflow: hidden; margin-top: 8px;
+  transition: border-color 0.2s;
+}
+.analytics-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px 8px; cursor: pointer; user-select: none;
+}
+.analytics-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted);
+}
+.analytics-desc { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* Confirm overlay */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+.overlay.active { display: flex; }
+.confirm-box {
+  background: white; border-radius: 14px; padding: 28px; max-width: 340px;
+  text-align: center; box-shadow: var(--shadow-md);
+}
+.confirm-box h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+.confirm-box p { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; }
+.confirm-actions { display: flex; gap: 10px; justify-content: center; }
+.btn-danger { background: var(--red); color: white; border-color: var(--red); }
+.btn-danger:hover { background: #dc2626; color: white; }
+
+.last-updated {
+  text-align: center; font-size: 13px; color: var(--text-light); margin-top: 20px;
+}
+
+/* ── Pyramid layout — organic growth panel (4 tiers) ── */
+.pyramid-apex  { max-width: 46%; margin-left: auto; margin-right: auto; }
+.pyramid-upper { max-width: 63%; margin-left: auto; margin-right: auto; }
+.pyramid-mid   { max-width: 81%; margin-left: auto; margin-right: auto; }
+.pyramid-base  { max-width: 100%; }
+
+/* ── Pyramid layout — validation panel (6 tiers, top = narrowest) ── */
+.v-t6 { max-width: 50%; margin-left: auto; margin-right: auto; }
+.v-t5 { max-width: 60%; margin-left: auto; margin-right: auto; }
+.v-t4 { max-width: 70%; margin-left: auto; margin-right: auto; }
+.v-t3 { max-width: 80%; margin-left: auto; margin-right: auto; }
+.v-t2 { max-width: 90%; margin-left: auto; margin-right: auto; }
+/* v-t1 = 100% — no class needed */
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div>
+      <h1>MediTailor — Progress Dashboard</h1>
+      <div class="subtitle">Organic Growth Manifest v3 &nbsp;·&nbsp; Rapid Validation Manifest v2 &nbsp;·&nbsp; Click tasks to mark complete</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="exportState()">Export</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">Import</button>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importState(event)">
+    <button class="btn" onclick="document.querySelector('.overlay').classList.add('active')">Reset</button>
+  </div>
+</header>
+
+<div class="summary-row">
+  <div class="summary-card">
+    <div class="summary-label">Organic Growth — 8 Pillars + Analytics</div>
+    <div class="summary-nums">
+      <span class="summary-pct" id="o-pct">0%</span>
+      <span class="summary-detail" id="o-detail">0 tasks complete</span>
+    </div>
+    <div class="track"><div class="fill fill-organic" id="o-bar" style="width:0%"></div></div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Validation — 5 Stages + Pre-Stage</div>
+    <div class="summary-nums">
+      <span class="summary-pct" id="v-pct">0%</span>
+      <span class="summary-detail" id="v-detail">0 tasks complete</span>
+    </div>
+    <div class="track"><div class="fill fill-validation" id="v-bar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="grid">
+
+<!-- ══════════════════════════════════════════════
+     ORGANIC GROWTH MANIFEST
+═══════════════════════════════════════════════ -->
+<div class="manifest-panel">
+  <div class="panel-header">
+    <div class="panel-icon panel-icon-o">🌱</div>
+    <div>
+      <div class="panel-title">Organic Growth Manifest</div>
+      <div class="panel-sub">8 pillars · 4 layers · Non-paid acquisition · Foundation → Advanced</div>
+    </div>
+  </div>
+  <div class="panel-body">
+
+    <!-- ADVANCED LAYER -->
+    <div class="layer-label">Advanced Layer</div>
+    <div class="blocks-row blocks-1 pyramid-apex">
+      <div class="block" id="o-p8">
+        <div class="block-header" onclick="toggleBlock('o-p8')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 8</div>
+            <div class="block-title">Product-Led Growth</div>
+            <div class="block-sub">Referral loops · embedded virality · ASO</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p8-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row">
+            <span class="block-prog-label" id="o-p8-pl">0 / 5 tasks</span>
+          </div>
+          <div class="block-track"><div class="block-fill" id="o-p8-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p8-tasks">
+          <div class="task-item" onclick="toggleTask('o-p8','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Free tier optimized to reliably deliver the "AI knew" moment</span></div>
+          <div class="task-item" onclick="toggleTask('o-p8','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Shareable session summaries with MediTailor branding</span></div>
+          <div class="task-item" onclick="toggleTask('o-p8','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Two-way referral program built (referrer + new user both rewarded)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p8','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">App Store Optimization (ASO) strategy implemented</span></div>
+          <div class="task-item" onclick="toggleTask('o-p8','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Challenge virality mechanics live (shareable daily progress)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPOUND LAYER -->
+    <div class="layer-label">Compound Layer</div>
+    <div class="blocks-row blocks-2 pyramid-upper">
+      <div class="block" id="o-p6">
+        <div class="block-header" onclick="toggleBlock('o-p6')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 6</div>
+            <div class="block-title">Digital PR</div>
+            <div class="block-sub">Qwoted · HARO · podcast · guest posts</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p6-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p6-pl">0 / 4 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p6-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p6-tasks">
+          <div class="task-item" onclick="toggleTask('o-p6','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">First 5 Qwoted/HARO pitches submitted</span></div>
+          <div class="task-item" onclick="toggleTask('o-p6','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">App roundup outreach started (Healthline, Verywell Mind, TechCrunch)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p6','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">First podcast guest appearance booked</span></div>
+          <div class="task-item" onclick="toggleTask('o-p6','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">First high-authority guest post published</span></div>
+        </div>
+      </div>
+
+      <div class="block" id="o-p7">
+        <div class="block-header" onclick="toggleBlock('o-p7')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 7</div>
+            <div class="block-title">Owned Audience & Email</div>
+            <div class="block-sub">Email list · sequences · newsletter</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p7-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p7-pl">0 / 4 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p7-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p7-tasks">
+          <div class="task-item" onclick="toggleTask('o-p7','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Email platform set up (Mailchimp or ConvertKit)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p7','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Welcome sequence written and live (5-7 emails)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p7','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Behavioral triggers configured (quiz result → matching sequence)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p7','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Newsletter first issue published</span></div>
+          <div class="task-item" onclick="toggleTask('o-p7','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Owned community launched (Discord or Circle — UGC, word-of-mouth, zero algorithm dependency)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROWTH LAYER -->
+    <div class="layer-label">Growth Layer</div>
+    <div class="blocks-row blocks-3 pyramid-mid">
+      <div class="block" id="o-p3">
+        <div class="block-header" onclick="toggleBlock('o-p3')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 3</div>
+            <div class="block-title">Content Ecosystem</div>
+            <div class="block-sub">60 pages live · CMM running</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p3-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p3-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p3-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p3-tasks">
+          <div class="task-item" onclick="toggleTask('o-p3','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">60+ pages live on site</span></div>
+          <div class="task-item" onclick="toggleTask('o-p3','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">CMM pipeline running (automated content production)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p3','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Pillar page "Why Generic Meditation Apps Fail" published</span></div>
+          <div class="task-item" onclick="toggleTask('o-p3','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">"State of AI Meditation" annual report published</span></div>
+          <div class="task-item" onclick="toggleTask('o-p3','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Content multiplication process active (1 asset → 15+ pieces)</span></div>
+        </div>
+      </div>
+
+      <div class="block" id="o-p4">
+        <div class="block-header" onclick="toggleBlock('o-p4')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 4</div>
+            <div class="block-title">Interactive & Zero-Party</div>
+            <div class="block-sub">Quiz · email capture · diagnostics</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p4-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p4-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p4-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p4-tasks">
+          <div class="task-item" onclick="toggleTask('o-p4','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Quiz live and accessible on site</span></div>
+          <div class="task-item" onclick="toggleTask('o-p4','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Quiz repositioned as primary homepage CTA</span></div>
+          <div class="task-item" onclick="toggleTask('o-p4','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Email capture integrated into quiz flow</span></div>
+          <div class="task-item" onclick="toggleTask('o-p4','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Shareable result cards designed and implemented</span></div>
+          <div class="task-item" onclick="toggleTask('o-p4','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Stress Pattern Diagnostic tool built</span></div>
+        </div>
+      </div>
+
+      <div class="block" id="o-p5">
+        <div class="block-header" onclick="toggleBlock('o-p5')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 5</div>
+            <div class="block-title">Social Distribution</div>
+            <div class="block-sub">TikTok · LinkedIn · Instagram</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p5-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p5-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p5-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p5-tasks">
+          <div class="task-item" onclick="toggleTask('o-p5','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">TikTok content program launched (weekly cadence, save rate tracked)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p5','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">LinkedIn founder posts live (2/week, Eli's profile)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p5','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Instagram Reels and Carousels active</span></div>
+          <div class="task-item" onclick="toggleTask('o-p5','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Reddit community participation (value-first, r/Meditation etc.)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p5','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">YouTube Shorts (cross-posting from TikTok)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOUNDATION LAYER -->
+    <div class="layer-label">Foundation Layer</div>
+    <div class="blocks-row blocks-2 pyramid-base">
+      <div class="block" id="o-p1">
+        <div class="block-header" onclick="toggleBlock('o-p1')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 1</div>
+            <div class="block-title">Trust Architecture</div>
+            <div class="block-sub">Transparency · founder identity · proof</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p1-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p1-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p1-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p1-tasks">
+          <div class="task-item" onclick="toggleTask('o-p1','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">/how-it-works transparency page live</span></div>
+          <div class="task-item" onclick="toggleTask('o-p1','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Organization schema + sameAs signals configured</span></div>
+          <div class="task-item" onclick="toggleTask('o-p1','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Founder bio with verifiable background published</span></div>
+          <div class="task-item" onclick="toggleTask('o-p1','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">3-5 user transformation stories with specific outcomes</span></div>
+          <div class="task-item" onclick="toggleTask('o-p1','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Entity clarity established (distinct from AWS MediaTailor in search)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p1','t6')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Intentional imperfection content active (unscripted founder moments, vulnerability content in feed)</span></div>
+        </div>
+      </div>
+
+      <div class="block" id="o-p2">
+        <div class="block-header" onclick="toggleBlock('o-p2')">
+          <div class="block-left">
+            <div class="block-tag">Pillar 2</div>
+            <div class="block-title">Search Foundation</div>
+            <div class="block-sub">SEO · AEO · GEO</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="o-p2-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="o-p2-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="o-p2-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="o-p2-tasks">
+          <div class="task-item" onclick="toggleTask('o-p2','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Technical SEO audit done and fixes applied</span></div>
+          <div class="task-item" onclick="toggleTask('o-p2','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Keyword strategy documented (upstream pain + comparison queries)</span></div>
+          <div class="task-item" onclick="toggleTask('o-p2','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">AEO: direct-answer openers + FAQPage schema on key pages</span></div>
+          <div class="task-item" onclick="toggleTask('o-p2','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">GEO: brand mentions on 3+ third-party sources</span></div>
+          <div class="task-item" onclick="toggleTask('o-p2','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">GSC submission pipeline fully operational (15 URLs/day automated)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS BASE -->
+    <div class="analytics-block" id="o-analytics">
+      <div class="analytics-header" onclick="toggleBlock('o-analytics')">
+        <div>
+          <div class="analytics-label">Analytics & Measurement — Horizontal Base</div>
+          <div class="analytics-desc">GA4 · full funnel attribution · ICE scoring · save rate north star</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="badge badge-not-started" id="o-analytics-badge"><span class="badge-dot"></span>Not started</span>
+          <svg class="chevron" style="color:#9ca3af" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        </div>
+      </div>
+      <div class="block-progress-area" style="padding:0 12px 10px">
+        <div class="block-prog-row"><span class="block-prog-label" id="o-analytics-pl">0 / 4 tasks</span></div>
+        <div class="block-track"><div class="block-fill" id="o-analytics-fill" style="width:0%;background:#e5e7eb"></div></div>
+      </div>
+      <div class="task-list collapsed" id="o-analytics-tasks">
+        <div class="task-item" onclick="toggleTask('o-analytics','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">GA4 key events configured: sign_up, trial_start, quiz_complete, cta_click</span></div>
+        <div class="task-item" onclick="toggleTask('o-analytics','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Full funnel attribution set up (content → quiz → signup → activation)</span></div>
+        <div class="task-item" onclick="toggleTask('o-analytics','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Content performance loop feeding back into CMM calendar</span></div>
+        <div class="task-item" onclick="toggleTask('o-analytics','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">TikTok save rate tracking live as north star metric</span></div>
+        <div class="task-item" onclick="toggleTask('o-analytics','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">ICE scoring active for all experiments (Impact × Confidence × Ease — micro-tests on 200-person cohorts)</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     RAPID VALIDATION MANIFEST — bottom up
+═══════════════════════════════════════════════ -->
+<div class="manifest-panel">
+  <div class="panel-header">
+    <div class="panel-icon panel-icon-v">🎯</div>
+    <div>
+      <div class="panel-title">Rapid Validation Manifest</div>
+      <div class="panel-sub">5 stages · go/no-go gates · kill-first · climbing from Pre-Stage ↑ to Scale</div>
+    </div>
+  </div>
+  <div class="panel-body">
+
+    <!-- STAGE 5 — top (most advanced) -->
+    <div class="blocks-row blocks-1 v-t6">
+      <div class="block" id="v-s5">
+        <div class="block-header" onclick="toggleBlock('v-s5')">
+          <div class="block-left">
+            <div class="block-tag">Stage 5 · 4-8 weeks · $2,000-5,000</div>
+            <div class="block-title">Channel Efficiency</div>
+            <div class="block-sub">Blended CAC &lt;$35 · LTV:CAC &gt;3:1</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="v-s5-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="v-s5-pl">0 / 6 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="v-s5-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="v-s5-tasks">
+          <div class="task-item" onclick="toggleTask('v-s5','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Meta Ads test run ($600 budget)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s5','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Google Search Ads test run ($600 budget)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s5','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">TikTok Ads test run ($400 budget)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s5','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">1-2 micro-influencer placements tested</span></div>
+          <div class="task-item" onclick="toggleTask('v-s5','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">LTV:CAC ratio confirmed &gt;3:1 on blended channel mix</span></div>
+          <div class="task-item" onclick="toggleTask('v-s5','t6')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Repeatable channel identified (consistent CPL over 3 weeks)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate v-t6"><div class="gate-line"></div><div class="gate-badge">↑ Gate 5 — LTV:CAC &gt;3:1 · blended CAC &lt;$35</div><div class="gate-line"></div></div>
+
+    <!-- STAGE 4 -->
+    <div class="blocks-row blocks-1 v-t5">
+      <div class="block" id="v-s4">
+        <div class="block-header" onclick="toggleBlock('v-s4')">
+          <div class="block-left">
+            <div class="block-tag">Stage 4 · 4-6 weeks · $0-1,000</div>
+            <div class="block-title">Retention Signal</div>
+            <div class="block-sub">Day 7 &gt;20% · Day 30 &gt;10% · NPS &gt;30</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="v-s4-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="v-s4-pl">0 / 6 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="v-s4-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="v-s4-tasks">
+          <div class="task-item" onclick="toggleTask('v-s4','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Closed beta launched (20-30 users, TestFlight or web invite)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s4','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Activation rate measured (&gt;40% complete first session in 48h)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s4','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Day 7 retention measured (target &gt;20%)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s4','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Day 30 retention measured (target &gt;10%)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s4','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">NPS pulse at Day 14 (&gt;30 target)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s4','t6')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Churn interviews done (5 churned + 5 retained)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate v-t5"><div class="gate-line"></div><div class="gate-badge">↑ Gate 4 — Day 7 &gt;20% · Day 30 &gt;10% · NPS &gt;30</div><div class="gate-line"></div></div>
+
+    <!-- STAGE 3 — CRITICAL -->
+    <div class="blocks-row blocks-1 v-t4">
+      <div class="block block-status-critical" id="v-s3">
+        <div class="block-header" onclick="toggleBlock('v-s3')">
+          <div class="block-left">
+            <div class="block-tag">Stage 3 · 2-3 weeks · $1,000-2,500</div>
+            <div class="block-title">Willingness to Pay (WTP)</div>
+            <div class="block-sub">No pricing page · no Stripe · no interviews yet</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-critical" id="v-s3-badge"><span class="badge-dot"></span>Critical gap</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="v-s3-pl">0 / 4 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="v-s3-fill" style="width:0%;background:#fecaca"></div></div>
+        </div>
+        <div class="task-list collapsed" id="v-s3-tasks">
+          <div class="task-item" onclick="toggleTask('v-s3','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Pricing page with real Stripe CTA live</span></div>
+          <div class="task-item" onclick="toggleTask('v-s3','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">$9.99 vs $14.99/month A/B test run</span></div>
+          <div class="task-item" onclick="toggleTask('v-s3','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Van Westendorp interviews completed (10 engaged leads)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s3','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">30 real payment transactions collected ($1+ deposits)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate v-t4"><div class="gate-line"></div><div class="gate-badge">↑ Gate 3 — 30 transactions · pricing page &gt;3% · WTP &gt;$10/mo</div><div class="gate-line"></div></div>
+
+    <!-- STAGE 2 -->
+    <div class="blocks-row blocks-1 v-t3">
+      <div class="block" id="v-s2">
+        <div class="block-header" onclick="toggleBlock('v-s2')">
+          <div class="block-left">
+            <div class="block-tag">Stage 2 · 2-3 weeks · $800-2,000</div>
+            <div class="block-title">Solution & Demand Signal</div>
+            <div class="block-sub">Site live · organic pull partial · cold paid test not run</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="v-s2-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="v-s2-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="v-s2-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="v-s2-tasks">
+          <div class="task-item" onclick="toggleTask('v-s2','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Landing page smoke test live (headline + CTA + demo)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s2','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">3 Meta Ad angles created and tested ($800-2,000 budget)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s2','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">150+ emails collected from cold paid traffic</span></div>
+          <div class="task-item" onclick="toggleTask('v-s2','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Short-form video save rate tested (5%+ = demand confirmed)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s2','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Winning angle identified (2x+ CTR vs others)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate v-t3"><div class="gate-line"></div><div class="gate-badge">↑ Gate 2 — CPL &lt;$20 · 150 emails · LP conversion &gt;4%</div><div class="gate-line"></div></div>
+
+    <!-- STAGE 1 -->
+    <div class="blocks-row blocks-1 v-t2">
+      <div class="block" id="v-s1">
+        <div class="block-header" onclick="toggleBlock('v-s1')">
+          <div class="block-left">
+            <div class="block-tag">Stage 1 · 1-2 weeks · $0-300</div>
+            <div class="block-title">Problem Validation</div>
+            <div class="block-sub">F5Bot active · community listening partial</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="v-s1-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="v-s1-pl">0 / 5 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="v-s1-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="v-s1-tasks">
+          <div class="task-item" onclick="toggleTask('v-s1','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">F5Bot keyword alerts set up and running</span></div>
+          <div class="task-item" onclick="toggleTask('v-s1','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">App Store + Reddit complaint analysis done</span></div>
+          <div class="task-item" onclick="toggleTask('v-s1','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Google Trends + keyword demand research completed</span></div>
+          <div class="task-item" onclick="toggleTask('v-s1','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">30 customer discovery interviews completed (Mom Test + JTBD)</span></div>
+          <div class="task-item" onclick="toggleTask('v-s1','t5')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Top 3 pain points documented in users' exact words</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate v-t2"><div class="gate-line"></div><div class="gate-badge">↑ Gate 1 — 20/30 interviews confirm problem · search demand exists</div><div class="gate-line"></div></div>
+
+    <!-- PRE-STAGE — bottom (foundation) -->
+    <div class="blocks-row blocks-1">
+      <div class="block" id="v-pre">
+        <div class="block-header" onclick="toggleBlock('v-pre')">
+          <div class="block-left">
+            <div class="block-tag">Pre-Stage · $0 · Start here</div>
+            <div class="block-title">Assumption Mapping</div>
+            <div class="block-sub">VC evaluation 6.6/10 · 5 assumptions mapped</div>
+          </div>
+          <div class="block-right">
+            <span class="badge badge-not-started" id="v-pre-badge"><span class="badge-dot"></span>Not started</span>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <div class="block-progress-area">
+          <div class="block-prog-row"><span class="block-prog-label" id="v-pre-pl">0 / 4 tasks</span></div>
+          <div class="block-track"><div class="block-fill" id="v-pre-fill" style="width:0%;background:#e5e7eb"></div></div>
+        </div>
+        <div class="task-list collapsed" id="v-pre-tasks">
+          <div class="task-item" onclick="toggleTask('v-pre','t1')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">5 core assumptions mapped (Problem, Solution, Market, WTP, Channel)</span></div>
+          <div class="task-item" onclick="toggleTask('v-pre','t2')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">VC evaluation completed (score: 6.6/10, dated 2026-03-25)</span></div>
+          <div class="task-item" onclick="toggleTask('v-pre','t3')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Kill criteria defined and documented</span></div>
+          <div class="task-item" onclick="toggleTask('v-pre','t4')"><div class="task-check"><svg class="task-check-icon" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="task-label">Assumptions prioritized by validation order (A1 before A4)</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /grid -->
+
+<div class="last-updated" id="lastUpdated">Last updated: —</div>
+
+<!-- Reset overlay -->
+<div class="overlay">
+  <div class="confirm-box">
+    <h3>Reset all progress?</h3>
+    <p>This will clear all checked tasks and restore the default state from today's session.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-danger" onclick="resetAll()">Reset</button>
+      <button class="btn" onclick="document.querySelector('.overlay').classList.remove('active')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Data: task counts per block ─────────────────────────────────────────────
+const TASK_COUNTS = {
+  'o-analytics': 5, 'o-p1': 6, 'o-p2': 5, 'o-p3': 5,
+  'o-p4': 5, 'o-p5': 5, 'o-p6': 4, 'o-p7': 5, 'o-p8': 5,
+  'v-pre': 4, 'v-s1': 5, 'v-s2': 5, 'v-s3': 4, 'v-s4': 6, 'v-s5': 6,
+};
+
+const ORGANIC_BLOCKS = ['o-analytics','o-p1','o-p2','o-p3','o-p4','o-p5','o-p6','o-p7','o-p8'];
+const VALIDATION_BLOCKS = ['v-pre','v-s1','v-s2','v-s3','v-s4','v-s5'];
+
+// Default state — used only for Reset and server fallback
+const DEFAULTS = {
+  'o-p1-t1': true, 'o-p1-t2': true,
+  'o-p2-t1': true, 'o-p2-t2': true, 'o-p2-t3': true, 'o-p2-t4': true, 'o-p2-t5': true,
+  'o-p3-t1': true, 'o-p3-t2': true, 'o-p3-t3': true,
+  'o-p4-t1': true,
+  'o-analytics-t1': true,
+  'v-pre-t1': true, 'v-pre-t2': true, 'v-pre-t3': true, 'v-pre-t4': true,
+  'v-s1-t1': true, 'v-s1-t2': true, 'v-s1-t3': true,
+};
+
+let state = {};
+
+// ─── API helpers ──────────────────────────────────────────────────────────────
+async function apiGet(path) {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error('GET ' + path + ' failed: ' + res.status);
+  return res.json();
+}
+
+async function apiPost(path, body) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('POST ' + path + ' failed: ' + res.status);
+  return res.json();
+}
+
+// ─── State: load from server ──────────────────────────────────────────────────
+async function loadState() {
+  try {
+    state = await apiGet('/api/state');
+  } catch (err) {
+    console.error('Failed to load state from server, using defaults:', err.message);
+    state = { ...DEFAULTS };
+  }
+}
+
+// ─── Timestamp ────────────────────────────────────────────────────────────────
+function updateTimestamp() {
+  const ts = state._ts;
+  if (!ts) return;
+  const d = new Date(ts);
+  document.getElementById('lastUpdated').textContent =
+    'Last updated: ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) +
+    ' at ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+// ─── Toggle task ──────────────────────────────────────────────────────────────
+async function toggleTask(blockId, taskId) {
+  const key = blockId + '-' + taskId;
+  // Optimistic UI update
+  state[key] = !state[key];
+  renderBlock(blockId);
+  updateSummary();
+
+  try {
+    const result = await apiPost('/api/toggle/' + key, {});
+    // Sync timestamp from server response
+    if (result._ts) {
+      state._ts = result._ts;
+      updateTimestamp();
+    }
+  } catch (err) {
+    console.error('Failed to save toggle, reverting:', err.message);
+    // Revert optimistic update on error
+    state[key] = !state[key];
+    renderBlock(blockId);
+    updateSummary();
+  }
+}
+
+// ─── Toggle expand/collapse ───────────────────────────────────────────────────
+function toggleBlock(blockId) {
+  const taskList = document.getElementById(blockId + '-tasks');
+  const block = document.getElementById(blockId);
+  if (!taskList) return;
+  taskList.classList.toggle('collapsed');
+  block.classList.toggle('open');
+}
+
+// ─── Render a block ───────────────────────────────────────────────────────────
+function renderBlock(blockId) {
+  const total = TASK_COUNTS[blockId] || 0;
+  let done = 0;
+  for (let i = 1; i <= total; i++) {
+    const key = blockId + '-t' + i;
+    const taskItems = document.querySelectorAll(`#${blockId}-tasks .task-item`);
+    const item = taskItems[i - 1];
+    if (state[key]) {
+      done++;
+      item && item.classList.add('done');
+    } else {
+      item && item.classList.remove('done');
+    }
+  }
+
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+  // Progress bar
+  const fill = document.getElementById(blockId + '-fill');
+  const pl = document.getElementById(blockId + '-pl');
+  if (fill) {
+    fill.style.width = pct + '%';
+    if (pct === 100) fill.style.background = 'var(--green)';
+    else if (pct >= 50) fill.style.background = 'var(--indigo)';
+    else if (pct > 0) fill.style.background = 'var(--amber)';
+    else fill.style.background = blockId === 'v-s3' ? 'var(--red-mid)' : '#e5e7eb';
+  }
+  if (pl) pl.textContent = done + ' / ' + total + ' tasks';
+
+  // Badge + block border
+  const badge = document.getElementById(blockId + '-badge');
+  const block = document.getElementById(blockId);
+
+  let badgeCls, borderCls, label;
+  if (pct === 100) {
+    badgeCls = 'badge-done'; borderCls = 'block-status-done'; label = 'Done';
+  } else if (pct >= 50) {
+    badgeCls = 'badge-in-progress-high'; borderCls = 'block-status-in-progress-high'; label = 'In progress';
+  } else if (pct > 0) {
+    badgeCls = 'badge-in-progress-low'; borderCls = 'block-status-in-progress-low'; label = 'In progress';
+  } else if (blockId === 'v-s3') {
+    badgeCls = 'badge-critical'; borderCls = 'block-status-critical'; label = 'Critical gap';
+  } else {
+    badgeCls = 'badge-not-started'; borderCls = 'block-status-not-started'; label = 'Not started';
+  }
+
+  if (badge) {
+    badge.className = 'badge ' + badgeCls;
+    badge.innerHTML = `<span class="badge-dot"></span>${label}`;
+  }
+
+  if (block) {
+    block.classList.remove('block-status-not-started','block-status-in-progress-low',
+      'block-status-in-progress-high','block-status-done','block-status-critical');
+    block.classList.add(borderCls);
+  }
+}
+
+// ─── Summary bars ─────────────────────────────────────────────────────────────
+function updateSummary() {
+  function calc(blocks) {
+    let done = 0, total = 0;
+    for (const b of blocks) {
+      const n = TASK_COUNTS[b] || 0;
+      total += n;
+      for (let i = 1; i <= n; i++) {
+        if (state[b + '-t' + i]) done++;
+      }
+    }
+    return { done, total, pct: total > 0 ? Math.round(done / total * 100) : 0 };
+  }
+
+  const o = calc(ORGANIC_BLOCKS);
+  const v = calc(VALIDATION_BLOCKS);
+
+  document.getElementById('o-bar').style.width = o.pct + '%';
+  document.getElementById('o-pct').textContent = o.pct + '%';
+  document.getElementById('o-detail').textContent = o.done + ' of ' + o.total + ' tasks complete';
+
+  document.getElementById('v-bar').style.width = v.pct + '%';
+  document.getElementById('v-pct').textContent = v.pct + '%';
+  document.getElementById('v-detail').textContent = v.done + ' of ' + v.total + ' tasks complete';
+}
+
+// ─── Export / Import ──────────────────────────────────────────────────────────
+function exportState() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'meditailor-progress-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importState(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = async ev => {
+    try {
+      const imported = { ...DEFAULTS, ...JSON.parse(ev.target.result) };
+      await apiPost('/api/state', imported);
+      state = imported;
+      state._ts = new Date().toISOString();
+      renderAll();
+      alert('Imported successfully.');
+    } catch { alert('Invalid file or server error.'); }
+  };
+  r.readAsText(file);
+}
+
+// ─── Reset ────────────────────────────────────────────────────────────────────
+async function resetAll() {
+  try {
+    const result = await apiPost('/api/state', { ...DEFAULTS });
+    state = result.state || { ...DEFAULTS };
+    renderAll();
+  } catch (err) {
+    console.error('Reset failed:', err.message);
+    alert('Reset failed — server error.');
+  }
+  document.querySelector('.overlay').classList.remove('active');
+}
+
+// ─── Render all ───────────────────────────────────────────────────────────────
+function renderAll() {
+  for (const b of [...ORGANIC_BLOCKS, ...VALIDATION_BLOCKS]) renderBlock(b);
+  updateSummary();
+  updateTimestamp();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadState().then(() => renderAll());
+</script>
+</body>
+</html>
