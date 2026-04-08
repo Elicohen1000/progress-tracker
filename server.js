@@ -12,37 +12,48 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ── Default state (matches DEFAULTS in HTML) ──────────────────────────────────
 const DEFAULTS = {
   // o-p1: Trust Architecture
-  'o-p1-t1': true,
-  'o-p1-t2': true,
+  // t1 (/how-it-works page) NOT done
+  'o-p1-t2': true,  // Organization schema done
+  'o-p1-t3': true,  // Founder bio done
 
   // o-p2: Search Foundation
-  'o-p2-t1': true,
-  'o-p2-t2': true,
-  'o-p2-t3': true,
-  'o-p2-t4': true,
-  'o-p2-t5': true,
+  'o-p2-t1': true,  // Technical SEO sprints complete
+  'o-p2-t2': true,  // Keyword strategy documented
+  'o-p2-t3': true,  // AEO + FAQPage schema done
+  // t4 (GEO 3+ brand mentions) in progress (TechBullion + ToolPilot = 2)
+  'o-p2-t5': true,  // GSC pipeline operational (51 URLs submitted, daily automation)
 
   // o-p3: Content Ecosystem
-  'o-p3-t1': true,
-  'o-p3-t2': true,
-  'o-p3-t3': true,
+  'o-p3-t1': true,  // 60+ pages live (51+ indexed URLs)
+  // t2 (CMM pipeline) NOT running yet
+  'o-p3-t3': true,  // Pillar pages live (/learn/ai-meditation, personalized-meditation, science)
 
   // o-p4: Interactive
-  'o-p4-t1': true,
+  'o-p4-t1': true,  // Quiz live
+  // t2 (quiz as primary CTA) not yet repositioned
+  'o-p4-t3': true,  // Email capture (Brevo) integrated
+
+  // o-p7: Owned Audience
+  'o-p7-t1': true,  // Email platform (Brevo) set up
 
   // o-analytics: Analytics
-  'o-analytics-t1': true,
+  'o-analytics-t1': true,  // GA4 event tracking implemented
 
-  // v-pre: Pre-validation
-  'v-pre-t1': true,
-  'v-pre-t2': true,
-  'v-pre-t3': true,
-  'v-pre-t4': true,
+  // v-pre: Pre-validation (all 4 complete)
+  'v-pre-t1': true,  // 5 core assumptions mapped
+  'v-pre-t2': true,  // VC evaluation completed (6.6/10, 2026-03-25)
+  'v-pre-t3': true,  // Kill criteria defined
+  'v-pre-t4': true,  // Assumptions prioritized
 
-  // v-s1: Stage 1
-  'v-s1-t1': true,
-  'v-s1-t2': true,
-  'v-s1-t3': true,
+  // v-s1: Problem Validation
+  'v-s1-t1': true,  // F5Bot keyword alerts active
+  'v-s1-t2': true,  // App Store + Reddit complaint analysis done
+  'v-s1-t3': true,  // Google Trends + keyword research completed
+  // t4 (30 discovery interviews) NOT done
+  // t5 (top 3 pain points) NOT done
+
+  // v-s2: Solution & Demand Signal
+  'v-s2-t1': true,  // Landing page live (meditailor.app fully deployed)
 };
 
 // ── State helpers ─────────────────────────────────────────────────────────────
