@@ -20,7 +20,7 @@ const DEFAULTS = {
   'o-p2-t1': true,  // Technical SEO sprints complete
   'o-p2-t2': true,  // Keyword strategy documented
   'o-p2-t3': true,  // AEO + FAQPage schema done
-  // t4 (GEO 3+ brand mentions) in progress (TechBullion + ToolPilot = 2)
+  'o-p2-t4': true,  // GEO brand mentions done (TechBullion + ToolPilot + Dang.ai + SubmitAITools = 4 sources)
   'o-p2-t5': true,  // GSC pipeline operational (51 URLs submitted, daily automation)
 
   // o-p3: Content Ecosystem
